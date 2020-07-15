@@ -30,8 +30,8 @@ public class FindViewModel extends ViewModel {
     float distance;
     List<Address> fromLocationName;
 
-    static MutableLiveData<String> nearDestStationMutabel= new MutableLiveData<>();
-    static MutableLiveData<String> nearLocStationMutabel= new MutableLiveData<>();
+    MutableLiveData<String> nearDestStationMutabel= new MutableLiveData<>();
+    MutableLiveData<String> nearLocStationMutabel= new MutableLiveData<>();
 
 
     public void findNearestStation(){

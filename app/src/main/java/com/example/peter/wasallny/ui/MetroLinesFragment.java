@@ -1,25 +1,25 @@
 package com.example.peter.wasallny.ui;
 
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
-import android.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.databinding.DataBindingUtil;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
 import com.example.peter.wasallny.R;
 //import com.example.peter.wasallny.databinding.FragmentMetroLinesBinding;
 import com.example.peter.wasallny.databinding.FragmentMetroLinesBinding;
+import com.github.nisrulz.sensey.Sensey;
+import com.github.nisrulz.sensey.ShakeDetector;
 import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
 import com.nightonke.boommenu.BoomButtons.TextOutsideCircleButton;
 import com.nightonke.boommenu.Util;
@@ -27,13 +27,12 @@ import com.nightonke.boommenu.Util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MetroLinesFragment extends Fragment{
+public class MetroLinesFragment extends Fragment implements ShakeDetector.ShakeListener {
 
     List<String> stations = Arrays.asList("New El Marg", "El Marg", "Ezbet El Nakhl", "Ain Shams", "El Matareyya", "Helmeyet El Zaitoun",
             "Hadayeq El Zaitoun", "Saray El Qobba", "Hammamat El Qobba", "Kobri El Qobba", "Manshiet El Sadr", "El Demerdash",
@@ -53,6 +52,15 @@ public class MetroLinesFragment extends Fragment{
 
     SubRecyclerAdapter suub=new SubRecyclerAdapter();
 
+    ArrayList<String> blankArrayList = new ArrayList<>();
+
+    @Override
+    public void onDestroy() {
+            Sensey.getInstance().stopShakeDetection(this);
+            Sensey.getInstance().stop();
+        super.onDestroy();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -63,6 +71,9 @@ public class MetroLinesFragment extends Fragment{
         binding.setLifecycleOwner(getActivity());
 
         View view = binding.getRoot();
+
+        Sensey.getInstance().init(getActivity());
+        Sensey.getInstance().startShakeDetection(this);
 
         layoutManager = new LinearLayoutManager(getActivity());
 
@@ -120,5 +131,16 @@ public class MetroLinesFragment extends Fragment{
         return view;
     }
 
+    @Override
+    public void onShakeDetected() {
+
+    }
+
+    @Override
+    public void onShakeStopped() {
+        binding.fromText.setText("");
+        binding.toText.setText("");
+        stationsViewModel.stationsNames.setValue(blankArrayList);
+    }
 }
 

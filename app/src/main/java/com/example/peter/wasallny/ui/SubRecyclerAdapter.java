@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,25 +14,34 @@ import android.widget.TextView;
 
 import com.example.peter.wasallny.R;
 
+import java.util.ArrayList;
+
 class SubRecyclerAdapter extends RecyclerView.Adapter<SubRecyclerAdapter.ViewHolder>{
-    AlertDialog.Builder builder=new AlertDialog.Builder(MainActivity.context);
+    AlertDialog.Builder builder;
+    Context context;
+    MutableLiveData<ArrayList<String>> stationsNames;
+    public SubRecyclerAdapter(Context context, MutableLiveData<ArrayList<String>> stationsNames) {
+        this.context = context;
+        this.stationsNames = stationsNames;
+    }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        builder=new AlertDialog.Builder(context);
         return new ViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item,viewGroup,false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, @SuppressLint("RecyclerView") final int i) {
             viewHolder.tv.setTextColor(Color.parseColor("#FFFFFF"));
-            viewHolder.tv.setText(StationsViewModel.stationsNames.getValue().get(i));
+            viewHolder.tv.setText(stationsNames.getValue().get(i));
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    String x = StationsViewModel.stationsNames.getValue().get(i);
-                    builder.setMessage(MainActivity.context.getSharedPreferences("metrotrain", Context.MODE_PRIVATE).getString(x, "")).create().show();
+                    String x = stationsNames.getValue().get(i);
+                    builder.setMessage(context.getSharedPreferences("metrotrain", Context.MODE_PRIVATE).getString(x, "")).create().show();
             }
         });
 
@@ -39,7 +49,7 @@ class SubRecyclerAdapter extends RecyclerView.Adapter<SubRecyclerAdapter.ViewHol
 
     @Override
     public int getItemCount() {
-            return StationsViewModel.stationsNames.getValue().size();
+            return stationsNames.getValue().size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

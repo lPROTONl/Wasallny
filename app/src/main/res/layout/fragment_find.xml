@@ -122,7 +122,6 @@
             app:nb_borderWidth="5dp"
             app:nb_radius="50dp"
             app:nb_text="Nearest Station"
-            android:onClick="@{()->viewModel.findNearestStation()}"
             app:nb_textColor="#1b212c"
             app:nb_textSize="18dp" />
 

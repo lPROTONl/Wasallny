@@ -38,19 +38,9 @@ import com.example.peter.wasallny.R;
 import java.io.IOException;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements LocationListener {
+public class MainActivity extends AppCompatActivity {
 
-    LocationManager manager;
-    static double longitude;
-    static double latitude;
-    static List<Address> addressList;
-
-    static SharedPreferences pref;
-    static ConnectivityManager connectivity;
-
-    static Context context;
-
-
+    SharedPreferences pref;
 
     /**
      * The {@link PagerAdapter} that will provide
@@ -74,20 +64,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        context = this;
-
-        connectivity= (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-
         getSharedPreferences();
-
-        manager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            String[]perm={Manifest.permission.ACCESS_FINE_LOCATION};
-            ActivityCompat.requestPermissions(this,perm,0);
-        }
-        else{
-            manager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, this, null);
-        }
 
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
@@ -137,49 +114,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode==0&&grantResults[0]==PackageManager.PERMISSION_GRANTED){
-            try {
-                manager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, this, null);
-            } catch (SecurityException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
-
-        Geocoder geocoder=new Geocoder(this);
-
-
-        try {
-            addressList = geocoder.getFromLocation(latitude, longitude, 1);
-        } catch (IOException e) {
-//            Toast.makeText(this, "Check Internet Connection", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
     }
 
     /**

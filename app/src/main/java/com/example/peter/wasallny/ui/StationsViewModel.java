@@ -3,8 +3,11 @@ package com.example.peter.wasallny.ui;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import androidx.appcompat.app.AlertDialog;
@@ -35,64 +38,57 @@ public class StationsViewModel extends ViewModel {
 
     float distance;
 
-    AlertDialog.Builder builder=new AlertDialog.Builder(MainActivity.context);
+    AlertDialog.Builder builder;
 
     Location startPoint;
     Location endPoint;
     ArrayList<Float> distanceList = new ArrayList<>();
 
-    static MutableLiveData<ArrayList<String>> stationsNames = new MutableLiveData<>();
+    MutableLiveData<ArrayList<String>> stationsNames = new MutableLiveData<>();
+    MutableLiveData<String> nearStationName = new MutableLiveData<>();
 
 
 
-    public void showMap() {
+    public void showMap(Context context, ConnectivityManager connectivity, String fromText,double latitude, double longitude) {
 
          if (Build.VERSION.SDK_INT >= 23) {
-             if (MetroLinesFragment.binding.fromText.getText().toString().equalsIgnoreCase("") || MetroLinesFragment.binding.fromText.getText().toString().equalsIgnoreCase(" ")) {
-                 Toast.makeText(MainActivity.context, "Please type your From Station", Toast.LENGTH_LONG).show();
-                 YoYo.with(Techniques.Shake).duration(500).repeat(2).playOn(MetroLinesFragment.binding.fromText);
-                 return;
-             } else if (MainActivity.connectivity.getActiveNetwork() == null) {
-                 Toast.makeText(MainActivity.context, "Check your Internet Connetion", Toast.LENGTH_SHORT).show();
+              if (connectivity.getActiveNetwork() == null) {
+                 Toast.makeText(context, "Check your Internet Connetion", Toast.LENGTH_SHORT).show();
                  return;
              } else {
                  Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?saddr=" +
-                         MainActivity.latitude  + "," + MainActivity.longitude+"&daddr="+
-                         stationsLat.get(stations.indexOf(MetroLinesFragment.binding.fromText.getText().toString()))
-                         + "," + stationsLong.get(stations.indexOf(MetroLinesFragment.binding.fromText.getText().toString()))));
-                 MainActivity.context.startActivity(in);
+                         latitude  + "," + longitude+"&daddr="+
+                         stationsLat.get(stations.indexOf(fromText))
+                         + "," + stationsLong.get(stations.indexOf(fromText))));
+                 context.startActivity(in);
              }
          } else if (Build.VERSION.SDK_INT < 23) {
-             if (MetroLinesFragment.binding.toText.getText().toString().equalsIgnoreCase("") || MetroLinesFragment.binding.toText.getText().toString().equalsIgnoreCase(" ")) {
-                 Toast.makeText(MainActivity.context, "Please type your From Station", Toast.LENGTH_LONG).show();
-                 YoYo.with(Techniques.Shake).duration(500).repeat(2).playOn(MetroLinesFragment.binding.fromText);
-                 return;
-             } else if (MainActivity.connectivity.getActiveNetworkInfo() == null) {
-                 Toast.makeText(MainActivity.context, "Check your Internet Connetion", Toast.LENGTH_SHORT).show();
+              if (connectivity.getActiveNetworkInfo() == null) {
+                 Toast.makeText(context, "Check your Internet Connetion", Toast.LENGTH_SHORT).show();
                  return;
              } else {
                  Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?saddr=" +
-                         MainActivity.latitude  + "," + MainActivity.longitude+"&daddr="+
-                         stationsLat.get(stations.indexOf(MetroLinesFragment.binding.fromText.getText().toString()))
-                         + "," + stationsLong.get(stations.indexOf(MetroLinesFragment.binding.fromText.getText().toString()))+ "&mode=d"));
-                 MainActivity.context.startActivity(in);
+                         latitude  + "," + longitude+"&daddr="+
+                         stationsLat.get(stations.indexOf(fromText))
+                         + "," + stationsLong.get(stations.indexOf(fromText))+ "&mode=d"));
+                 context.startActivity(in);
              }
          }
     }
 //
 //
-    public void getNearestStation() {
+    public void getNearestStation(Context context, ConnectivityManager connectivity, double latitude, double longitude) {
 
         if (Build.VERSION.SDK_INT >= 23) {
-            if (MainActivity.connectivity.getActiveNetwork() == null) {
-                Toast.makeText(MainActivity.context, "Check your Internet Connetion", Toast.LENGTH_SHORT).show();
+            if (connectivity.getActiveNetwork() == null) {
+                Toast.makeText(context, "Check your Internet Connetion", Toast.LENGTH_SHORT).show();
                 return;
             } else {
                 try {
                     distanceList.clear();
                     startPoint = new Location("locationA");
-                    startPoint.setLatitude(MainActivity.latitude);
-                    startPoint.setLongitude(MainActivity.longitude);
+                    startPoint.setLatitude(latitude);
+                    startPoint.setLongitude(longitude);
 
 
                     endPoint = new Location("locationA");
@@ -107,7 +103,8 @@ public class StationsViewModel extends ViewModel {
                         }
                         Float min = Collections.min(distanceList);
 
-                        MetroLinesFragment.binding.nearText.setText("Nearest Station to you is " + stations.get(distanceList.indexOf(min)));
+                        nearStationName.postValue(stations.get(distanceList.indexOf(min)));
+                        nearStationName.postValue(stations.get(distanceList.indexOf(min)));
 
                     }
                 } catch (Exception e) {
@@ -117,15 +114,15 @@ public class StationsViewModel extends ViewModel {
             }
         } else if (Build.VERSION.SDK_INT < 23) {
 
-            if (MainActivity.connectivity.getActiveNetworkInfo() == null) {
-                Toast.makeText(MainActivity.context, "Check your Internet Connetion", Toast.LENGTH_SHORT).show();
+            if (connectivity.getActiveNetworkInfo() == null) {
+                Toast.makeText(context, "Check your Internet Connetion", Toast.LENGTH_SHORT).show();
                 return;
             } else {
                 try {
                     distanceList.clear();
                     startPoint = new Location("locationA");
-                    startPoint.setLatitude(MainActivity.latitude);
-                    startPoint.setLongitude(MainActivity.longitude);
+                    startPoint.setLatitude(latitude);
+                    startPoint.setLongitude(longitude);
 
 
                     endPoint = new Location("locationA");
@@ -140,8 +137,7 @@ public class StationsViewModel extends ViewModel {
                         }
                         Float min = Collections.min(distanceList);
 
-                        MetroLinesFragment.binding.nearText.setText("Nearest Station to you is " + stations.get(distanceList.indexOf(min)));
-
+                        nearStationName.postValue(stations.get(distanceList.indexOf(min)));
                     }
                 } catch (Exception e) {
 //                                Toast.makeText(getActivity(), "Check Internet Connection", Toast.LENGTH_SHORT).show();
@@ -152,31 +148,17 @@ public class StationsViewModel extends ViewModel {
         }
 
     }
-    public void getStations() {
+    public void getStations(Context context,String fromText, String toText) {
 
-                if ((MetroLinesFragment.binding.fromText.getText().toString().equals("") || MetroLinesFragment.binding.fromText.getText().toString().equals(" "))
-                        && (MetroLinesFragment.binding.toText.getText().toString().equals("") || MetroLinesFragment.binding.toText.getText().toString().equals(" "))) {
-                    Toast.makeText(MainActivity.context, "Please Type Stations Name", Toast.LENGTH_SHORT).show();
-                    YoYo.with(Techniques.Shake).duration(500).repeat(2).playOn(MetroLinesFragment.binding.fromText);
-                    YoYo.with(Techniques.Shake).duration(500).repeat(2).playOn(MetroLinesFragment.binding.toText);
-                    return;
-                } else if (MetroLinesFragment.binding.fromText.getText().toString().equals("") || MetroLinesFragment.binding.fromText.getText().toString().equals(" ")) {
-                    Toast.makeText(MainActivity.context, "Please Type Station Name in From Station", Toast.LENGTH_SHORT).show();
-                    YoYo.with(Techniques.Shake).duration(500).repeat(2).playOn(MetroLinesFragment.binding.fromText);
-                    return;
-                } else if (MetroLinesFragment.binding.toText.getText().toString().equals("") || MetroLinesFragment.binding.toText.getText().toString().equals(" ")) {
-                    Toast.makeText(MainActivity.context, "Please Type Station Name in To Station", Toast.LENGTH_SHORT).show();
-                    YoYo.with(Techniques.Shake).duration(500).repeat(2).playOn(MetroLinesFragment.binding.toText);
-                    return;
-                }
+        builder=new AlertDialog.Builder(context);
 
         sub.clear();
         sub2.clear();
         sub3.clear();
 
 //      First Line Marg To Helwan.
-        if (line1.contains(MetroLinesFragment.binding.fromText.getText().toString()) && (line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) < line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()))) {
-            sub.addAll(line1.subList(line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()), line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()) + 1));
+        if (line1.contains(fromText) && (line1.indexOf(fromText) < line1.indexOf(toText))) {
+            sub.addAll(line1.subList(line1.indexOf(fromText), line1.indexOf(toText) + 1));
             stationsNames.setValue(sub);
 //            Toast.makeText(MetroLinesFragment.context, "1 IF", Toast.LENGTH_SHORT).show();
             if (sub.size() <= 9 && sub.size() > 0)
@@ -189,8 +171,8 @@ public class StationsViewModel extends ViewModel {
         }
 
 //      First Line Helwan To Marg.
-        else if (line1.contains(MetroLinesFragment.binding.toText.getText().toString()) && (line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) > line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()))) {
-                sub.addAll(line1.subList(line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()), line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) + 1));
+        else if (line1.contains(toText) && (line1.indexOf(fromText) > line1.indexOf(toText))) {
+                sub.addAll(line1.subList(line1.indexOf(toText), line1.indexOf(fromText) + 1));
                     Collections.reverse(sub);
 //                Toast.makeText(MetroLinesFragment.context, "2 IF", Toast.LENGTH_SHORT).show();
                     stationsNames.setValue(sub);
@@ -203,8 +185,8 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //      Second Line Shubra To El Mounib.
-        else if (line2.contains(MetroLinesFragment.binding.fromText.getText().toString()) && (line2.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) < line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()))) {
-            sub.addAll(line2.subList(line2.indexOf(MetroLinesFragment.binding.fromText.getText().toString()), line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()) + 1));
+        else if (line2.contains(fromText) && (line2.indexOf(fromText) < line2.indexOf(toText))) {
+            sub.addAll(line2.subList(line2.indexOf(fromText), line2.indexOf(toText) + 1));
 //            Toast.makeText(MetroLinesFragment.context, "3 IF", Toast.LENGTH_SHORT).show();
             stationsNames.setValue(sub);
                     if (sub.size() <= 9 && sub.size() > 0)
@@ -216,8 +198,8 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //      Second Line El Mounib To Shubra.
-        else if (line2.contains(MetroLinesFragment.binding.toText.getText().toString()) && (line2.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) > line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()))) {
-            sub.addAll(line2.subList(line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()), line2.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) + 1));
+        else if (line2.contains(toText) && (line2.indexOf(fromText) > line2.indexOf(toText))) {
+            sub.addAll(line2.subList(line2.indexOf(toText), line2.indexOf(fromText) + 1));
             Collections.reverse(sub);
 //            Toast.makeText(MetroLinesFragment.context, "4 IF", Toast.LENGTH_SHORT).show();
             stationsNames.setValue(sub);
@@ -230,8 +212,8 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //      Third Line El Ahram To Attaba.
-        else if (line3.contains(MetroLinesFragment.binding.fromText.getText().toString()) && (line3.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) < line3.indexOf(MetroLinesFragment.binding.toText.getText().toString()))) {
-            sub.addAll(line3.subList(line3.indexOf(MetroLinesFragment.binding.fromText.getText().toString()), line3.indexOf(MetroLinesFragment.binding.toText.getText().toString()) + 1));
+        else if (line3.contains(fromText) && (line3.indexOf(fromText) < line3.indexOf(toText))) {
+            sub.addAll(line3.subList(line3.indexOf(fromText), line3.indexOf(toText) + 1));
 //            Toast.makeText(MetroLinesFragment.context, "5 IF", Toast.LENGTH_SHORT).show();
             stationsNames.setValue(sub);
                     if (sub.size() <= 9 && sub.size() > 0)
@@ -243,8 +225,8 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //      Third Line Attaba To Adly Mansour.
-        else if (line3.contains(MetroLinesFragment.binding.toText.getText().toString()) && (line3.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) > line3.indexOf(MetroLinesFragment.binding.toText.getText().toString()))) {
-            sub.addAll(line3.subList(line3.indexOf(MetroLinesFragment.binding.toText.getText().toString()), line3.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) + 1));
+        else if (line3.contains(toText) && (line3.indexOf(fromText) > line3.indexOf(toText))) {
+            sub.addAll(line3.subList(line3.indexOf(toText), line3.indexOf(fromText) + 1));
             Collections.reverse(sub);
 //            Toast.makeText(MetroLinesFragment.context, "6 IF", Toast.LENGTH_SHORT).show();
             stationsNames.setValue(sub);
@@ -257,9 +239,9 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //      Fisrt Line To Second Line Marg To El Mounib.
-        else if (line1.contains(MetroLinesFragment.binding.fromText.getText().toString()) && line2.contains(MetroLinesFragment.binding.toText.getText().toString()) && (line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()) > line2.indexOf("Al Shohadaa")) && (line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) < line1.indexOf("Al Shohadaa"))) {
-            sub.addAll(line1.subList(line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()), line1.indexOf("Al Shohadaa") + 1));
-            sub.addAll(line2.subList(line2.indexOf("Attaba"), line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()) + 1));
+        else if (line1.contains(fromText) && line2.contains(toText) && (line2.indexOf(toText) > line2.indexOf("Al Shohadaa")) && (line1.indexOf(fromText) < line1.indexOf("Al Shohadaa"))) {
+            sub.addAll(line1.subList(line1.indexOf(fromText), line1.indexOf("Al Shohadaa") + 1));
+            sub.addAll(line2.subList(line2.indexOf("Attaba"), line2.indexOf(toText) + 1));
 //            Toast.makeText(MetroLinesFragment.context, "7 IF", Toast.LENGTH_SHORT).show();
                 stationsNames.setValue(sub);
                     if (sub.size() <= 9 && sub.size() > 0)
@@ -271,9 +253,9 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //              Fisrt Line To Second Line Marg To Shubra.
-                else if (line1.contains(MetroLinesFragment.binding.fromText.getText().toString()) && line2.contains(MetroLinesFragment.binding.toText.getText().toString()) && (line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()) < line2.indexOf("Al Shohadaa")) && (line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) < line1.indexOf("Al Shohadaa"))) {
-                    sub.addAll(line1.subList(line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()), line1.indexOf("Ghamra") + 1));
-                    sub2.addAll(line2.subList(line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()), line2.indexOf("Al Shohadaa") + 1));
+                else if (line1.contains(fromText) && line2.contains(toText) && (line2.indexOf(toText) < line2.indexOf("Al Shohadaa")) && (line1.indexOf(fromText) < line1.indexOf("Al Shohadaa"))) {
+                    sub.addAll(line1.subList(line1.indexOf(fromText), line1.indexOf("Ghamra") + 1));
+                    sub2.addAll(line2.subList(line2.indexOf(toText), line2.indexOf("Al Shohadaa") + 1));
                     Collections.reverse(sub2);
                     sub3.addAll(sub);
                     sub3.addAll(sub2);
@@ -288,10 +270,10 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //              Second Line To First Line El Mounib To Marg.
-                else if (line1.contains(MetroLinesFragment.binding.toText.getText().toString()) && line2.contains(MetroLinesFragment.binding.fromText.getText().toString()) && (line2.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) > line2.indexOf("Al Shohadaa")) && (line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()) < line1.indexOf("Al Shohadaa"))) {
-                    sub.addAll(line1.subList(line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()), line1.indexOf("Al Shohadaa") + 1));
+                else if (line1.contains(toText) && line2.contains(fromText) && (line2.indexOf(fromText) > line2.indexOf("Al Shohadaa")) && (line1.indexOf(toText) < line1.indexOf("Al Shohadaa"))) {
+                    sub.addAll(line1.subList(line1.indexOf(toText), line1.indexOf("Al Shohadaa") + 1));
                     Collections.reverse(sub);
-                    sub2.addAll(line2.subList(line2.indexOf("Attaba"), line2.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) + 1));
+                    sub2.addAll(line2.subList(line2.indexOf("Attaba"), line2.indexOf(fromText) + 1));
                     Collections.reverse(sub2);
                     sub3.addAll(sub2);
                     sub3.addAll(sub);
@@ -306,10 +288,10 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //              Second Line To First Line Shubra To Marg.
-                else if (line1.contains(MetroLinesFragment.binding.toText.getText().toString()) && line2.contains(MetroLinesFragment.binding.fromText.getText().toString()) && (line2.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) < line2.indexOf("Al Shohadaa")) && (line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()) < line1.indexOf("Al Shohadaa"))) {
-                    sub.addAll(line1.subList(line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()), line1.indexOf("Ghamra") + 1));
+                else if (line1.contains(toText) && line2.contains(fromText) && (line2.indexOf(fromText) < line2.indexOf("Al Shohadaa")) && (line1.indexOf(toText) < line1.indexOf("Al Shohadaa"))) {
+                    sub.addAll(line1.subList(line1.indexOf(toText), line1.indexOf("Ghamra") + 1));
                     Collections.reverse(sub);
-                    sub2.addAll(line2.subList(line2.indexOf(MetroLinesFragment.binding.fromText.getText().toString()), line2.indexOf("Al Shohadaa") + 1));
+                    sub2.addAll(line2.subList(line2.indexOf(fromText), line2.indexOf("Al Shohadaa") + 1));
                     sub3.addAll(sub2);
                     sub3.addAll(sub);
 //                  Toast.makeText(MetroLinesFragment.context, "10 IF", Toast.LENGTH_SHORT).show();
@@ -323,11 +305,11 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //              First Line To Second Line Helwan To El Mounib.
-                else if (line1.contains(MetroLinesFragment.binding.fromText.getText().toString()) && line2.contains(MetroLinesFragment.binding.toText.getText().toString())
-                        && ((line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()) > line2.indexOf("Al Shohadaa")) && (line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()) > line2.indexOf("Sadat"))) && (line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) > line1.indexOf("Sadat"))) {
-                    sub.addAll(line1.subList(line1.indexOf("Sadat"), line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) + 1));
+                else if (line1.contains(fromText) && line2.contains(toText)
+                        && ((line2.indexOf(toText) > line2.indexOf("Al Shohadaa")) && (line2.indexOf(toText) > line2.indexOf("Sadat"))) && (line1.indexOf(fromText) > line1.indexOf("Sadat"))) {
+                    sub.addAll(line1.subList(line1.indexOf("Sadat"), line1.indexOf(fromText) + 1));
                     Collections.reverse(sub);
-                    sub2.addAll(line2.subList(line2.indexOf("Opera"), line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()) + 1));
+                    sub2.addAll(line2.subList(line2.indexOf("Opera"), line2.indexOf(toText) + 1));
                     sub3.addAll(sub);
                     sub3.addAll(sub2);
 //                  Toast.makeText(MetroLinesFragment.context, "11 IF", Toast.LENGTH_SHORT).show();
@@ -341,32 +323,32 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //           **   First Line To Second Line Orabi Or Nasser To El Mounib.
-                else if (line1.contains(MetroLinesFragment.binding.fromText.getText().toString()) && line2.contains(MetroLinesFragment.binding.toText.getText().toString()) && (line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()) > line2.indexOf("Al Shohadaa")) &&
-                        (line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) > line1.indexOf("Al Shohadaa")) && (line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) < line1.indexOf("Sadat"))) {
+                else if (line1.contains(fromText) && line2.contains(toText) && (line2.indexOf(toText) > line2.indexOf("Al Shohadaa")) &&
+                        (line1.indexOf(fromText) > line1.indexOf("Al Shohadaa")) && (line1.indexOf(fromText) < line1.indexOf("Sadat"))) {
 //                  Toast.makeText(MetroLinesFragment.context, "12 IF", Toast.LENGTH_SHORT).show();
-                    if (MetroLinesFragment.binding.fromText.getText().toString().equalsIgnoreCase("Orabi") && line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()) > line2.indexOf("Sadat")) {
+                    if (fromText.equalsIgnoreCase("Orabi") && line2.indexOf(toText) > line2.indexOf("Sadat")) {
                         sub.addAll(line1.subList(line1.indexOf("Orabi"), line1.indexOf("Nasser") + 1));
-                        sub2.addAll(line2.subList(line2.indexOf("Sadat"), line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()) + 1));
+                        sub2.addAll(line2.subList(line2.indexOf("Sadat"), line2.indexOf(toText) + 1));
                         sub3.addAll(sub);
                         sub3.addAll(sub2);
                         stationsNames.setValue(sub3);
-                    } else if (MetroLinesFragment.binding.fromText.getText().toString().equalsIgnoreCase("Orabi") && line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()) < line2.indexOf("Sadat")) {
-                        sub.addAll(line1.subList(line1.indexOf("Orabi"), line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) + 1));
-                        sub2.addAll(line2.subList(line2.indexOf("Al Shohadaa"), line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()) + 1));
+                    } else if (fromText.equalsIgnoreCase("Orabi") && line2.indexOf(toText) < line2.indexOf("Sadat")) {
+                        sub.addAll(line1.subList(line1.indexOf("Orabi"), line1.indexOf(fromText) + 1));
+                        sub2.addAll(line2.subList(line2.indexOf("Al Shohadaa"), line2.indexOf(toText) + 1));
                         sub3.addAll(sub);
                         sub3.addAll(sub2);
                         stationsNames.setValue(sub3);
-                    } else if (MetroLinesFragment.binding.fromText.getText().toString().equalsIgnoreCase("Nasser") && line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()) > line2.indexOf("Sadat")) {
+                    } else if (fromText.equalsIgnoreCase("Nasser") && line2.indexOf(toText) > line2.indexOf("Sadat")) {
                         sub.addAll(line1.subList(line1.indexOf("Nasser"), line1.indexOf("Sadat")));
                         Collections.reverse(sub);
-                        sub2.addAll(line2.subList(line2.indexOf("Sadat"), line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()) + 1));
+                        sub2.addAll(line2.subList(line2.indexOf("Sadat"), line2.indexOf(toText) + 1));
                         sub3.addAll(sub);
                         sub3.addAll(sub2);
                         stationsNames.setValue(sub3);
-                    } else if (MetroLinesFragment.binding.fromText.getText().toString().equalsIgnoreCase("Nasser") && line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()) < line2.indexOf("Sadat")) {
+                    } else if (fromText.equalsIgnoreCase("Nasser") && line2.indexOf(toText) < line2.indexOf("Sadat")) {
                         sub.addAll(line1.subList(line1.indexOf("Nasser"), line1.indexOf("Sadat")));
                         Collections.reverse(sub);
-                        sub2.addAll(line2.subList(line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()), line2.indexOf("Sadat") + 1));
+                        sub2.addAll(line2.subList(line2.indexOf(toText), line2.indexOf("Sadat") + 1));
                         Collections.reverse(sub2);
                         sub3.addAll(sub);
                         sub3.addAll(sub2);
@@ -381,36 +363,36 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //          **    Second Line To First Line Attaba Or Naguib To Helwan.
-                else if (line2.contains(MetroLinesFragment.binding.fromText.getText().toString())
-                && line1.contains(MetroLinesFragment.binding.toText.getText().toString())
-                && (line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()) > line1.indexOf("Al Shohadaa"))
-                && (line2.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) > line2.indexOf("Al Shohadaa"))
-                && (line2.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) < line2.indexOf("Sadat"))) {
+                else if (line2.contains(fromText)
+                && line1.contains(toText)
+                && (line1.indexOf(toText) > line1.indexOf("Al Shohadaa"))
+                && (line2.indexOf(fromText) > line2.indexOf("Al Shohadaa"))
+                && (line2.indexOf(fromText) < line2.indexOf("Sadat"))) {
 //              Toast.makeText(MetroLinesFragment.context, "13 IF", Toast.LENGTH_SHORT).show();
-                    if (MetroLinesFragment.binding.fromText.getText().toString().equalsIgnoreCase("Attaba") && line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()) > line1.indexOf("Sadat")) {
+                    if (fromText.equalsIgnoreCase("Attaba") && line1.indexOf(toText) > line1.indexOf("Sadat")) {
                         sub.addAll(line2.subList(line2.indexOf("Attaba"), line2.indexOf("Sadat")));
-                        sub2.addAll(line1.subList(line1.indexOf("Sadat"), line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()) + 1));
+                        sub2.addAll(line1.subList(line1.indexOf("Sadat"), line1.indexOf(toText) + 1));
                         sub3.addAll(sub);
                         sub3.addAll(sub2);
                         stationsNames.setValue(sub3);
-                    } else if (MetroLinesFragment.binding.fromText.getText().toString().equalsIgnoreCase("Attaba") && line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()) < line1.indexOf("Sadat")) {
+                    } else if (fromText.equalsIgnoreCase("Attaba") && line1.indexOf(toText) < line1.indexOf("Sadat")) {
                         sub.addAll(line2.subList(line2.indexOf("Attaba"), line2.indexOf("Sadat")));
-                        sub2.addAll(line1.subList(line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()), line1.indexOf("Sadat") + 1));
+                        sub2.addAll(line1.subList(line1.indexOf(toText), line1.indexOf("Sadat") + 1));
                         Collections.reverse(sub2);
                         sub3.addAll(sub);
                         sub3.addAll(sub2);
                         stationsNames.setValue(sub3);
-                    } else if (MetroLinesFragment.binding.fromText.getText().toString().equalsIgnoreCase("Mohamed Naguib") && line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()) > line1.indexOf("Sadat")) {
+                    } else if (fromText.equalsIgnoreCase("Mohamed Naguib") && line1.indexOf(toText) > line1.indexOf("Sadat")) {
                         sub.addAll(line2.subList(line2.indexOf("Mohamed Naguib"), line2.indexOf("Sadat")));
                         Collections.reverse(sub);
-                        sub2.addAll(line1.subList(line1.indexOf("Sadat"), line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()) + 1));
+                        sub2.addAll(line1.subList(line1.indexOf("Sadat"), line1.indexOf(toText) + 1));
                         sub3.addAll(sub);
                         sub3.addAll(sub2);
                         stationsNames.setValue(sub3);
-                    } else if (MetroLinesFragment.binding.fromText.getText().toString().equalsIgnoreCase("Mohamed Naguib") && line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()) < line1.indexOf("Sadat")) {
+                    } else if (fromText.equalsIgnoreCase("Mohamed Naguib") && line1.indexOf(toText) < line1.indexOf("Sadat")) {
                         sub.addAll(line2.subList(line2.indexOf("Mohamed Naguib"), line2.indexOf("Sadat")));
                         Collections.reverse(sub);
-                        sub2.addAll(line1.subList(line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()), line1.indexOf("Sadat") + 1));
+                        sub2.addAll(line1.subList(line1.indexOf(toText), line1.indexOf("Sadat") + 1));
                         Collections.reverse(sub2);
                         sub3.addAll(sub);
                         sub3.addAll(sub2);
@@ -425,21 +407,21 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //          **    First Line To Second Line Helwan To Attaba Or Naguib.
-                else if (line1.contains(MetroLinesFragment.binding.fromText.getText().toString()) && line2.contains(MetroLinesFragment.binding.toText.getText().toString())
-                        && (line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) > line1.indexOf("Al Shohadaa")) && (line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()) > line2.indexOf("Al Shohadaa")) && (line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()) < line1.indexOf("Sadat"))) {
+                else if (line1.contains(fromText) && line2.contains(toText)
+                        && (line1.indexOf(fromText) > line1.indexOf("Al Shohadaa")) && (line2.indexOf(toText) > line2.indexOf("Al Shohadaa")) && (line2.indexOf(toText) < line1.indexOf("Sadat"))) {
 //                  Toast.makeText(MetroLinesFragment.context, "14 IF", Toast.LENGTH_SHORT).show();
-                    if (MetroLinesFragment.binding.toText.getText().toString().equalsIgnoreCase("Attaba") && line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) > line1.indexOf("Sadat")) {
+                    if (toText.equalsIgnoreCase("Attaba") && line1.indexOf(fromText) > line1.indexOf("Sadat")) {
                         sub.addAll(line2.subList(line2.indexOf("Attaba"), line2.indexOf("Sadat")));
                         Collections.reverse(sub);
-                        sub2.addAll(line1.subList(line1.indexOf("Sadat"), line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) + 1));
+                        sub2.addAll(line1.subList(line1.indexOf("Sadat"), line1.indexOf(fromText) + 1));
                         Collections.reverse(sub2);
                         sub3.addAll(sub2);
                         sub3.addAll(sub);
                         stationsNames.setValue(sub3);
-                    } else if (MetroLinesFragment.binding.toText.getText().toString().equalsIgnoreCase("Mohamed Naguib") && line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) > line1.indexOf("Sadat")) {
+                    } else if (toText.equalsIgnoreCase("Mohamed Naguib") && line1.indexOf(fromText) > line1.indexOf("Sadat")) {
                         sub.addAll(line2.subList(line2.indexOf("Mohamed Naguib"), line2.indexOf("Sadat")));
                         Collections.reverse(sub);
-                        sub2.addAll(line1.subList(line1.indexOf("Sadat"), line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) + 1));
+                        sub2.addAll(line1.subList(line1.indexOf("Sadat"), line1.indexOf(fromText) + 1));
                         Collections.reverse(sub2);
                         sub3.addAll(sub2);
                         sub3.addAll(sub);
@@ -455,11 +437,11 @@ public class StationsViewModel extends ViewModel {
 
 
 //              First Line To Second Line Helwan To Shubra.
-                else if (line1.contains(MetroLinesFragment.binding.fromText.getText().toString()) && line2.contains(MetroLinesFragment.binding.toText.getText().toString())
-                        && (line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()) < line2.indexOf("Al Shohadaa")) && (line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) > line1.indexOf("Al Shohadaa"))) {
-                    sub.addAll(line1.subList(line1.indexOf("Al Shohadaa"), line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) + 1));
+                else if (line1.contains(fromText) && line2.contains(toText)
+                        && (line2.indexOf(toText) < line2.indexOf("Al Shohadaa")) && (line1.indexOf(fromText) > line1.indexOf("Al Shohadaa"))) {
+                    sub.addAll(line1.subList(line1.indexOf("Al Shohadaa"), line1.indexOf(fromText) + 1));
                     Collections.reverse(sub);
-                    sub2.addAll(line2.subList(line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()), line2.indexOf("Al Shohadaa")));
+                    sub2.addAll(line2.subList(line2.indexOf(toText), line2.indexOf("Al Shohadaa")));
                     Collections.reverse(sub2);
                     sub3.addAll(sub);
                     sub3.addAll(sub2);
@@ -474,9 +456,9 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //              Second Line To Fisrt Line El Mounib To Helwan.
-                else if (line1.contains(MetroLinesFragment.binding.toText.getText().toString()) && line2.contains(MetroLinesFragment.binding.fromText.getText().toString()) && (line2.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) > line2.indexOf("Sadat")) && (line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()) > line1.indexOf("Sadat"))) {
-                    sub.addAll(line1.subList(line1.indexOf("Sadat"), line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()) + 1));
-                    sub2.addAll(line2.subList(line2.indexOf("Opera"), line2.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) + 1));
+                else if (line1.contains(toText) && line2.contains(fromText) && (line2.indexOf(fromText) > line2.indexOf("Sadat")) && (line1.indexOf(toText) > line1.indexOf("Sadat"))) {
+                    sub.addAll(line1.subList(line1.indexOf("Sadat"), line1.indexOf(toText) + 1));
+                    sub2.addAll(line2.subList(line2.indexOf("Opera"), line2.indexOf(fromText) + 1));
                     Collections.reverse(sub2);
                     sub3.addAll(sub2);
                     sub3.addAll(sub);
@@ -491,10 +473,10 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //              Second Line To First Line Shubra To Helwan.
-                else if (line1.contains(MetroLinesFragment.binding.toText.getText().toString()) && line2.contains(MetroLinesFragment.binding.fromText.getText().toString())
-                && (line2.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) < line2.indexOf("Al Shohadaa")) && (line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()) > line1.indexOf("Al Shohadaa"))) {
-                    sub.addAll(line1.subList(line1.indexOf("Orabi"), line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()) + 1));
-                    sub2.addAll(line2.subList(line2.indexOf(MetroLinesFragment.binding.fromText.getText().toString()), line2.indexOf("Al Shohadaa") + 1));
+                else if (line1.contains(toText) && line2.contains(fromText)
+                && (line2.indexOf(fromText) < line2.indexOf("Al Shohadaa")) && (line1.indexOf(toText) > line1.indexOf("Al Shohadaa"))) {
+                    sub.addAll(line1.subList(line1.indexOf("Orabi"), line1.indexOf(toText) + 1));
+                    sub2.addAll(line2.subList(line2.indexOf(fromText), line2.indexOf("Al Shohadaa") + 1));
                     sub3.addAll(sub2);
                     sub3.addAll(sub);
 //                  Toast.makeText(MetroLinesFragment.context, "17 IF", Toast.LENGTH_SHORT).show();
@@ -508,10 +490,10 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //              First Line To Third Line Marg To Adly Mansour.
-                else if (line1.contains(MetroLinesFragment.binding.fromText.getText().toString()) && line3.contains(MetroLinesFragment.binding.toText.getText().toString()) && (line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) < line1.indexOf("Al Shohadaa"))) {
-                    sub.addAll(line1.subList(line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()), line1.indexOf("Al Shohadaa")));
+                else if (line1.contains(fromText) && line3.contains(toText) && (line1.indexOf(fromText) < line1.indexOf("Al Shohadaa"))) {
+                    sub.addAll(line1.subList(line1.indexOf(fromText), line1.indexOf("Al Shohadaa")));
                     sub.addAll(line2.subList(line2.indexOf("Al Shohadaa"), line2.indexOf("Attaba")));
-                    sub2.addAll(line3.subList(line3.indexOf(MetroLinesFragment.binding.toText.getText().toString()), line3.indexOf("Attaba") + 1));
+                    sub2.addAll(line3.subList(line3.indexOf(toText), line3.indexOf("Attaba") + 1));
                     sub3.addAll(sub);
                     Collections.reverse(sub2);
                     sub3.addAll(sub2);
@@ -526,11 +508,11 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //              First Line To Third Line Helwan To Adly Mansour.
-                else if (line1.contains(MetroLinesFragment.binding.fromText.getText().toString()) && line3.contains(MetroLinesFragment.binding.toText.getText().toString()) && (line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) > line1.indexOf("Sadat"))) {
-                    sub.addAll(line1.subList(line1.indexOf("Sadat"), line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) + 1));
+                else if (line1.contains(fromText) && line3.contains(toText) && (line1.indexOf(fromText) > line1.indexOf("Sadat"))) {
+                    sub.addAll(line1.subList(line1.indexOf("Sadat"), line1.indexOf(fromText) + 1));
                     Collections.reverse(sub);
                     sub.addAll(line2.subList(line2.indexOf("Mohamed Naguib"), line2.indexOf("Sadat")));
-                    sub2.addAll(line3.subList(line3.indexOf(MetroLinesFragment.binding.toText.getText().toString()), line3.indexOf("Attaba") + 1));
+                    sub2.addAll(line3.subList(line3.indexOf(toText), line3.indexOf("Attaba") + 1));
                     sub3.addAll(sub);
                     Collections.reverse(sub2);
                     sub3.addAll(sub2);
@@ -545,20 +527,20 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //          **    First Line To Third Line Orabi Or Nasser To Adly Mansour.
-                else if (line1.contains(MetroLinesFragment.binding.fromText.getText().toString()) && line3.contains(MetroLinesFragment.binding.toText.getText().toString()) && (line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) > line1.indexOf("Al Shohadaa")) && (line1.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) < line1.indexOf("Sadat"))) {
+                else if (line1.contains(fromText) && line3.contains(toText) && (line1.indexOf(fromText) > line1.indexOf("Al Shohadaa")) && (line1.indexOf(fromText) < line1.indexOf("Sadat"))) {
 //              Toast.makeText(MetroLinesFragment.context, "20 IF", Toast.LENGTH_SHORT).show();
-                    if (MetroLinesFragment.binding.fromText.getText().toString().equalsIgnoreCase("Orabi")) {
+                    if (fromText.equalsIgnoreCase("Orabi")) {
                         sub.addAll(line1.subList(line1.indexOf("Al Shohadaa"), line1.indexOf("Orabi") + 1));
                         Collections.reverse(sub);
-                        sub2.addAll(line3.subList(line3.indexOf(MetroLinesFragment.binding.toText.getText().toString()), line3.indexOf("Attaba") + 1));
+                        sub2.addAll(line3.subList(line3.indexOf(toText), line3.indexOf("Attaba") + 1));
                         Collections.reverse(sub2);
                         sub3.addAll(sub);
                         sub3.addAll(sub2);
                         stationsNames.setValue(sub3);
-                    } else if (MetroLinesFragment.binding.fromText.getText().toString().equalsIgnoreCase("Nasser")) {
+                    } else if (fromText.equalsIgnoreCase("Nasser")) {
                         sub.addAll(line1.subList(line1.indexOf("Al Shohadaa"), line1.indexOf("Nasser") + 1));
                         Collections.reverse(sub);
-                        sub2.addAll(line3.subList(line3.indexOf(MetroLinesFragment.binding.toText.getText().toString()), line3.indexOf("Attaba") + 1));
+                        sub2.addAll(line3.subList(line3.indexOf(toText), line3.indexOf("Attaba") + 1));
                         Collections.reverse(sub2);
                         sub3.addAll(sub);
                         sub3.addAll(sub2);
@@ -573,18 +555,18 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //          **    Third Line To First Line Adly Mansour To Orabi Or Nasser.
-                else if (line3.contains(MetroLinesFragment.binding.fromText.getText().toString()) && line1.contains(MetroLinesFragment.binding.toText.getText().toString())
-                        && (line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()) > line1.indexOf("Al Shohadaa")) && (line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()) < line1.indexOf("Sadat"))) {
+                else if (line3.contains(fromText) && line1.contains(toText)
+                        && (line1.indexOf(toText) > line1.indexOf("Al Shohadaa")) && (line1.indexOf(toText) < line1.indexOf("Sadat"))) {
 //                  Toast.makeText(MetroLinesFragment.context, "21 IF", Toast.LENGTH_SHORT).show();
-                    if (MetroLinesFragment.binding.toText.getText().toString().equalsIgnoreCase("Orabi")) {
+                    if (toText.equalsIgnoreCase("Orabi")) {
                         sub.addAll(line1.subList(line1.indexOf("Al Shohadaa"), line1.indexOf("Orabi") + 1));
-                        sub2.addAll(line3.subList(line3.indexOf(MetroLinesFragment.binding.fromText.getText().toString()), line3.indexOf("Attaba") + 1));
+                        sub2.addAll(line3.subList(line3.indexOf(fromText), line3.indexOf("Attaba") + 1));
                         sub3.addAll(sub2);
                         sub3.addAll(sub);
                         stationsNames.setValue(sub3);
-                    } else if (MetroLinesFragment.binding.toText.getText().toString().equalsIgnoreCase("Nasser")) {
+                    } else if (toText.equalsIgnoreCase("Nasser")) {
                         sub.addAll(line1.subList(line1.indexOf("Al Shohadaa"), line1.indexOf("Nasser") + 1));
-                        sub2.addAll(line3.subList(line3.indexOf(MetroLinesFragment.binding.fromText.getText().toString()), line3.indexOf("Attaba") + 1));
+                        sub2.addAll(line3.subList(line3.indexOf(fromText), line3.indexOf("Attaba") + 1));
                         sub3.addAll(sub2);
                         sub3.addAll(sub);
                         stationsNames.setValue(sub3);
@@ -598,21 +580,21 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //    **  Second Line To First Line Mounib to Orabi Or Nasser
-        else if (line1.contains(MetroLinesFragment.binding.toText.getText().toString()) && line2.contains(MetroLinesFragment.binding.fromText.getText().toString())
-                && (line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()) > line1.indexOf("Al Shohadaa")) && (line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()) < line1.indexOf("Sadat"))) {
+        else if (line1.contains(toText) && line2.contains(fromText)
+                && (line1.indexOf(toText) > line1.indexOf("Al Shohadaa")) && (line1.indexOf(toText) < line1.indexOf("Sadat"))) {
 //            Toast.makeText(MetroLinesFragment.context, "22 IF", Toast.LENGTH_SHORT).show();
-            if (MetroLinesFragment.binding.toText.getText().toString().equalsIgnoreCase("Orabi")) {
+            if (toText.equalsIgnoreCase("Orabi")) {
                 sub.addAll(line1.subList(line1.indexOf("Orabi"), line1.indexOf("Sadat")));
                 Collections.reverse(sub);
-                sub2.addAll(line2.subList(line2.indexOf("Sadat"), line2.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) + 1));
+                sub2.addAll(line2.subList(line2.indexOf("Sadat"), line2.indexOf(fromText) + 1));
                 Collections.reverse(sub2);
                 sub3.addAll(sub2);
                 sub3.addAll(sub);
                 stationsNames.setValue(sub3);
-            } else if (MetroLinesFragment.binding.toText.getText().toString().equalsIgnoreCase("Nasser")) {
+            } else if (toText.equalsIgnoreCase("Nasser")) {
                 sub.addAll(line1.subList(line1.indexOf("Nasser"), line1.indexOf("Sadat")));
                 Collections.reverse(sub);
-                sub2.addAll(line2.subList(line2.indexOf("Sadat"), line2.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) + 1));
+                sub2.addAll(line2.subList(line2.indexOf("Sadat"), line2.indexOf(fromText) + 1));
                 Collections.reverse(sub2);
                 sub3.addAll(sub2);
                 sub3.addAll(sub);
@@ -627,11 +609,11 @@ public class StationsViewModel extends ViewModel {
         }
 
 //              Third Line To First Line Adly Mansour To Helwan.
-                else if (line1.contains(MetroLinesFragment.binding.toText.getText().toString()) && line3.contains(MetroLinesFragment.binding.fromText.getText().toString()) && (line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()) > line1.indexOf("Sadat"))) {
-                    sub.addAll(line1.subList(line1.indexOf("Sadat"), line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()) + 1));
+                else if (line1.contains(toText) && line3.contains(fromText) && (line1.indexOf(toText) > line1.indexOf("Sadat"))) {
+                    sub.addAll(line1.subList(line1.indexOf("Sadat"), line1.indexOf(toText) + 1));
                     Collections.reverse(sub);
                     sub.addAll(line2.subList(line2.indexOf("Mohamed Naguib"), line2.indexOf("Sadat")));
-                    sub2.addAll(line3.subList(line3.indexOf(MetroLinesFragment.binding.fromText.getText().toString()), line3.indexOf("Attaba") + 1));
+                    sub2.addAll(line3.subList(line3.indexOf(fromText), line3.indexOf("Attaba") + 1));
                     sub3.addAll(sub);
                     Collections.reverse(sub2);
                     sub3.addAll(sub2);
@@ -647,10 +629,10 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //              Third Line To First Line Adly Mansour To Marg.
-                else if (line1.contains(MetroLinesFragment.binding.toText.getText().toString()) && line3.contains(MetroLinesFragment.binding.fromText.getText().toString()) && (line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()) < line1.indexOf("Al Shohadaa"))) {
-                    sub.addAll(line1.subList(line1.indexOf(MetroLinesFragment.binding.toText.getText().toString()), line1.indexOf("Ghamra") + 1));
+                else if (line1.contains(toText) && line3.contains(fromText) && (line1.indexOf(toText) < line1.indexOf("Al Shohadaa"))) {
+                    sub.addAll(line1.subList(line1.indexOf(toText), line1.indexOf("Ghamra") + 1));
                     sub.addAll(line2.subList(line2.indexOf("Al Shohadaa"), line2.indexOf("Attaba")));
-                    sub2.addAll(line3.subList(line3.indexOf(MetroLinesFragment.binding.fromText.getText().toString()), line3.indexOf("Attaba") + 1));
+                    sub2.addAll(line3.subList(line3.indexOf(fromText), line3.indexOf("Attaba") + 1));
                     sub3.addAll(sub);
                     Collections.reverse(sub2);
                     sub3.addAll(sub2);
@@ -666,9 +648,9 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //                Second Line To Third Line Shubra To Adly Mansour.
-                else if (line2.contains(MetroLinesFragment.binding.fromText.getText().toString()) && line3.contains(MetroLinesFragment.binding.toText.getText().toString()) && (line2.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) <= line2.indexOf("Al Shohadaa"))) {
-                    sub.addAll(line2.subList(line2.indexOf(MetroLinesFragment.binding.fromText.getText().toString()), line2.indexOf("Attaba") + 1));
-                    sub2.addAll(line3.subList(line3.indexOf(MetroLinesFragment.binding.toText.getText().toString()), line3.indexOf("Attaba")));
+                else if (line2.contains(fromText) && line3.contains(toText) && (line2.indexOf(fromText) <= line2.indexOf("Al Shohadaa"))) {
+                    sub.addAll(line2.subList(line2.indexOf(fromText), line2.indexOf("Attaba") + 1));
+                    sub2.addAll(line3.subList(line3.indexOf(toText), line3.indexOf("Attaba")));
                     sub3.addAll(sub);
                     Collections.reverse(sub2);
                     sub3.addAll(sub2);
@@ -683,10 +665,10 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //              Second Line To Third Line El Mounib To Adly Mansour.
-                else if (line2.contains(MetroLinesFragment.binding.fromText.getText().toString()) && line3.contains(MetroLinesFragment.binding.toText.getText().toString()) && (line2.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) > line2.indexOf("Al Shohadaa"))) {
-                    sub.addAll(line2.subList(line2.indexOf("Attaba"), line2.indexOf(MetroLinesFragment.binding.fromText.getText().toString()) + 1));
+                else if (line2.contains(fromText) && line3.contains(toText) && (line2.indexOf(fromText) > line2.indexOf("Al Shohadaa"))) {
+                    sub.addAll(line2.subList(line2.indexOf("Attaba"), line2.indexOf(fromText) + 1));
                     Collections.reverse(sub);
-                    sub2.addAll(line3.subList(line3.indexOf(MetroLinesFragment.binding.toText.getText().toString()), line3.indexOf("Attaba")));
+                    sub2.addAll(line3.subList(line3.indexOf(toText), line3.indexOf("Attaba")));
                     sub3.addAll(sub);
                     Collections.reverse(sub2);
                     sub3.addAll(sub2);
@@ -701,10 +683,10 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //              Third Line To Second Line Adly Mansour To El Mounib.
-                else if (line2.contains(MetroLinesFragment.binding.toText.getText().toString()) && line3.contains(MetroLinesFragment.binding.fromText.getText().toString()) && (line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()) > line2.indexOf("Al Shohadaa"))) {
-                    sub.addAll(line2.subList(line2.indexOf("Attaba"), line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()) + 1));
+                else if (line2.contains(toText) && line3.contains(fromText) && (line2.indexOf(toText) > line2.indexOf("Al Shohadaa"))) {
+                    sub.addAll(line2.subList(line2.indexOf("Attaba"), line2.indexOf(toText) + 1));
                     Collections.reverse(sub);
-                    sub2.addAll(line3.subList(line3.indexOf(MetroLinesFragment.binding.fromText.getText().toString()), line3.indexOf("Attaba")));
+                    sub2.addAll(line3.subList(line3.indexOf(fromText), line3.indexOf("Attaba")));
                     sub3.addAll(sub);
                     Collections.reverse(sub2);
                     sub3.addAll(sub2);
@@ -720,9 +702,9 @@ public class StationsViewModel extends ViewModel {
                 }
 
 //              Third Line To Second Line Adly Mansour To Shubra.
-                else if (line2.contains(MetroLinesFragment.binding.toText.getText().toString()) && line3.contains(MetroLinesFragment.binding.fromText.getText().toString()) && (line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()) <= line2.indexOf("Al Shohadaa"))) {
-                    sub.addAll(line2.subList(line2.indexOf(MetroLinesFragment.binding.toText.getText().toString()), line2.indexOf("Attaba") + 1));
-                    sub2.addAll(line3.subList(line3.indexOf(MetroLinesFragment.binding.fromText.getText().toString()), line3.indexOf("Attaba")));
+                else if (line2.contains(toText) && line3.contains(fromText) && (line2.indexOf(toText) <= line2.indexOf("Al Shohadaa"))) {
+                    sub.addAll(line2.subList(line2.indexOf(toText), line2.indexOf("Attaba") + 1));
+                    sub2.addAll(line3.subList(line3.indexOf(fromText), line3.indexOf("Attaba")));
                     sub3.addAll(sub);
                     Collections.reverse(sub2);
                     sub3.addAll(sub2);

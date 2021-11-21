@@ -152,10 +152,64 @@ public class FindViewModel extends ViewModel {
                         public void run() {
                             String destinationName = destinationText;
                             Geocoder geocoder = new Geocoder(context);
+
+                            Location startPoint;
+                            Location endPoint;
                             try {
                                 fromLocationName = geocoder.getFromLocationName(destinationName, 10);
                                 try {
                                     address=fromLocationName.get(0);
+
+                                    // Get Near Station To User Destination.
+                                    try {
+                                        distanceList.clear();
+                                        startPoint = new Location("locationA");
+                                        startPoint.setLatitude(address.getLatitude());
+                                        startPoint.setLongitude(address.getLongitude());
+
+                                        endPoint = new Location("locationA");
+
+                                        for (int j = 0; j < stations.size(); j++) {
+
+                                            endPoint.setLatitude(stationsLat.get(j));
+                                            endPoint.setLongitude(stationsLong.get(j));
+                                            distance = (startPoint.distanceTo(endPoint)) / 1000;
+                                            distanceList.add(distance);
+
+                                            Float min = Collections.min(distanceList);
+
+                                            nearDestStationMutabel.postValue(stations.get(distanceList.indexOf(min)));
+                                        }
+                                    } catch (Exception e) {
+//                Toast.makeText(getActivity(), "Check your Internet Connetion", Toast.LENGTH_SHORT).show();
+                                        e.printStackTrace();
+                                    }
+                                    // Get Near Station To User Location.
+                                    try {
+                                        distanceList.clear();
+                                        startPoint = new Location("locationA");
+                                        startPoint.setLatitude(latitude);
+                                        startPoint.setLongitude(longitude);
+
+                                        endPoint = new Location("locationA");
+                                        for (int i = 0; i < stations.size(); i++) {
+                                            if (i < stations.size()) {
+                                                endPoint.setLatitude(stationsLat.get(i));
+                                                endPoint.setLongitude(stationsLong.get(i));
+                                                distance = (startPoint.distanceTo(endPoint)) / 1000;
+                                                distanceList.add(distance);
+                                            } else {
+                                                break;
+                                            }
+                                            Float min = Collections.min(distanceList);
+
+                                            nearLocStationMutabel.postValue(stations.get(distanceList.indexOf(min)));
+
+                                        }
+                                    } catch (Exception e) {
+//                Toast.makeText(getActivity(), "Check your Internet Connetion", Toast.LENGTH_SHORT).show();
+                                        e.printStackTrace();
+                                    }
                                 } catch (Exception e) {
                                     Handler handler = new Handler(Looper.getMainLooper());
                                     handler.post(new Runnable() {
@@ -169,60 +223,6 @@ public class FindViewModel extends ViewModel {
 
                             } catch (IOException e) {
 //                Toast.makeText(getActivity(), "Check Internet Connection", Toast.LENGTH_SHORT).show();
-                                e.printStackTrace();
-                            }
-
-                            Location startPoint;
-                            Location endPoint;
-
-                            // Get Near Station To User Destination.
-                            try {
-                                distanceList.clear();
-                                startPoint = new Location("locationA");
-                                startPoint.setLatitude(address.getLatitude());
-                                startPoint.setLongitude(address.getLongitude());
-
-                                endPoint = new Location("locationA");
-
-                                for (int j = 0; j < stations.size(); j++) {
-
-                                    endPoint.setLatitude(stationsLat.get(j));
-                                    endPoint.setLongitude(stationsLong.get(j));
-                                    distance = (startPoint.distanceTo(endPoint)) / 1000;
-                                    distanceList.add(distance);
-
-                                    Float min = Collections.min(distanceList);
-
-                                    nearDestStationMutabel.postValue(stations.get(distanceList.indexOf(min)));
-                                }
-                            } catch (Exception e) {
-//                Toast.makeText(getActivity(), "Check your Internet Connetion", Toast.LENGTH_SHORT).show();
-                                e.printStackTrace();
-                            }
-                            // Get Near Station To User Location.
-                            try {
-                                distanceList.clear();
-                                startPoint = new Location("locationA");
-                                startPoint.setLatitude(latitude);
-                                startPoint.setLongitude(longitude);
-
-                                endPoint = new Location("locationA");
-                                for (int i = 0; i < stations.size(); i++) {
-                                    if (i < stations.size()) {
-                                        endPoint.setLatitude(stationsLat.get(i));
-                                        endPoint.setLongitude(stationsLong.get(i));
-                                        distance = (startPoint.distanceTo(endPoint)) / 1000;
-                                        distanceList.add(distance);
-                                    } else {
-                                        break;
-                                    }
-                                    Float min = Collections.min(distanceList);
-
-                                    nearLocStationMutabel.postValue(stations.get(distanceList.indexOf(min)));
-
-                                }
-                            } catch (Exception e) {
-//                Toast.makeText(getActivity(), "Check your Internet Connetion", Toast.LENGTH_SHORT).show();
                                 e.printStackTrace();
                             }
                         }

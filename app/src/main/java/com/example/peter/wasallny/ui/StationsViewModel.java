@@ -50,7 +50,7 @@ public class StationsViewModel extends ViewModel {
 
 
     public void showMap(Context context, ConnectivityManager connectivity, String fromText,double latitude, double longitude) {
-
+        
          if (Build.VERSION.SDK_INT >= 23) {
               if (connectivity.getActiveNetwork() == null) {
                  Toast.makeText(context, "Check your Internet Connetion", Toast.LENGTH_SHORT).show();

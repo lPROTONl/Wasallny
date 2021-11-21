@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="lang">
+        <item>إخنر لغة</item>
+        <item>عربي</item>
+        <item>English</item>
+    </string-array>
+    <string name="NearestStation">أقرب محطة لك</string>
+    <string name="search">البحث داخل القاهرة و الجيزة فقط</string>
+    <string name="nearest_station_to_your_location">أقرب محطة لمكانك الحالي</string>
+    <string name="nearest_station_to_your_destination">أقرب محطة لوجهة وصولك</string>
+    <string name="Destination">وجهة الوصول</string>
+    <string name="from_station">محطة الركوب</string>
+    <string name="to_station">محطة الوصول</string>
+    <string name="ex_helwan">مثال: حلوان</string>
+    <string name="ex_heliopolis">مثال: هيلوبوليس</string>
+    <string name="Map">الخريطة</string>
+    <string name="Nearest_Station">أقرب محطة لك</string>
+</resources>

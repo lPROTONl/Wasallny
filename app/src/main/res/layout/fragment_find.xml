@@ -47,7 +47,7 @@
             android:layout_marginLeft="24dp"
             android:layout_marginTop="68dp"
             android:gravity="fill_vertical"
-            android:text="Nearest Station To Your Location"
+            android:text="@string/nearest_station_to_your_location"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -78,7 +78,7 @@
             android:layout_marginLeft="24dp"
             android:layout_marginTop="24dp"
             android:gravity="fill_vertical"
-            android:text="Nearest Station To Your Destination"
+            android:text="@string/nearest_station_to_your_destination"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -121,7 +121,7 @@
             app:nb_borderColor="#1b212c"
             app:nb_borderWidth="5dp"
             app:nb_radius="50dp"
-            app:nb_text="Nearest Station"
+            app:nb_text="@string/NearestStation"
             app:nb_textColor="#1b212c"
             app:nb_textSize="18dp" />
 
@@ -135,9 +135,18 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:gravity="center_vertical|center_horizontal"
-            android:text="Search inside Cairo &amp; Giza"
+            android:text="@string/search"
             android:textColor="#FFFFFF"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Spinner
+            android:id="@+id/langSpinner"
+            android:layout_width="82dp"
+            android:layout_height="34dp"
+            android:layout_marginTop="36dp"
+            android:entries="@array/lang"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

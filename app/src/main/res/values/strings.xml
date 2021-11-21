@@ -6,6 +6,22 @@
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
+    <string-array name="lang">
+        <item>Select</item>
+        <item>عربي</item>
+        <item>English</item>
+    </string-array>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="NearestStation">Nearest Station</string>
+    <string name="search">Search Inside Cairo &amp; Giza</string>
+    <string name="nearest_station_to_your_location">Nearest Station To Your Location</string>
+    <string name="nearest_station_to_your_destination">Nearest Station To Your Destination</string>
+    <string name="Destination">Destination</string>
+    <string name="from_station">From Station</string>
+    <string name="to_station">To Station</string>
+    <string name="ex_helwan">Ex: Helwan</string>
+    <string name="ex_heliopolis">Ex: Heliopolis</string>
+    <string name="Map">Map</string>
+    <string name="Nearest_Station">Nearest Station</string>
 </resources>

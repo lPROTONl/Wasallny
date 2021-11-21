@@ -185,7 +185,7 @@ public class MetroLinesFragment extends Fragment implements ShakeDetector.ShakeL
         for (int i = 1; i < binding.bmb.getPiecePlaceEnum().pieceNumber(); i++) {
             TextOutsideCircleButton.Builder builder1 = new TextOutsideCircleButton.Builder().isRound(false).shadowCornerRadius(Util.dp2px(20))
                     .buttonCornerRadius(Util.dp2px(20))
-                    .normalText("Map")
+                    .normalText(getString(R.string.Map))
                     .textSize(14)
                     .normalImageRes(R.drawable.map)
                     .listener(new OnBMClickListener() {
@@ -207,7 +207,7 @@ public class MetroLinesFragment extends Fragment implements ShakeDetector.ShakeL
 
         TextOutsideCircleButton.Builder builder2 = new TextOutsideCircleButton.Builder().isRound(false).shadowCornerRadius(Util.dp2px(20))
                 .buttonCornerRadius(Util.dp2px(20))
-                .normalText("Nearest Station")
+                .normalText(getString(R.string.Nearest_Station))
                 .textSize(14)
                 .normalImageRes(R.drawable.near)
                 .listener(new OnBMClickListener() {
@@ -240,15 +240,15 @@ public class MetroLinesFragment extends Fragment implements ShakeDetector.ShakeL
         latitude = location.getLatitude();
         longitude = location.getLongitude();
 
-        Geocoder geocoder=new Geocoder(getActivity());
-
-
-        try {
-            addressList = geocoder.getFromLocation(latitude, longitude, 1);
-        } catch (IOException e) {
-//            Toast.makeText(this, "Check Internet Connection", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        }
+//        Geocoder geocoder=new Geocoder(getActivity());
+//
+//
+//        try {
+//            addressList = geocoder.getFromLocation(latitude, longitude, 1);
+//        } catch (IOException e) {
+////            Toast.makeText(this, "Check Internet Connection", Toast.LENGTH_SHORT).show();
+//            e.printStackTrace();
+//        }
     }
 
     @Override

@@ -37,7 +37,7 @@ dependencies {
     implementation 'com.ornach.nobobutton:nobobutton:1.6'
     implementation 'com.daimajia.androidanimations:library:2.4@aar'
     implementation 'com.github.nisrulz:sensey:1.8.0'
-
+    implementation 'org.greenrobot:eventbus:3.2.0'
     def lifecycle_version = "1.1.1"
 
     // ViewModel and LiveData

@@ -16,4 +16,9 @@
     <string name="ex_heliopolis">مثال: هيلوبوليس</string>
     <string name="Map">الخريطة</string>
     <string name="Nearest_Station">أقرب محطة لك</string>
+    <string name="Check_your_Internet_Connection">برجاء التحقق من إتصالك بالإنترنت</string>
+    <string name="Street_Name">برجاء أضف كلمة شارع قبل مكان البحث</string>
+    <string name="Station_Name">من فضلك اختر المحطة</string>
+    <string name="From_Station">من فضلك اختر محطة الركوب</string>
+    <string name="To_Station">من فضلك اختر محطة الوصول</string>
 </resources>

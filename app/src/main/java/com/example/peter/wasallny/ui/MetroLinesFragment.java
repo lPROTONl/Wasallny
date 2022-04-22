@@ -53,7 +53,7 @@ import static android.content.Context.LOCATION_SERVICE;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MetroLinesFragment extends Fragment implements ShakeDetector.ShakeListener, LocationListener {
+public class MetroLinesFragment extends Fragment implements LocationListener {
 
     List<String> stations = Arrays.asList("New El Marg", "El Marg", "Ezbet El Nakhl", "Ain Shams", "El Matareyya", "Helmeyet El Zaitoun",
             "Hadayeq El Zaitoun", "Saray El Qobba", "Hammamat El Qobba", "Kobri El Qobba", "Manshiet El Sadr", "El Demerdash",
@@ -85,12 +85,12 @@ public class MetroLinesFragment extends Fragment implements ShakeDetector.ShakeL
     NoboButton destinationButton;
 
     LocationManager manager;
-    @Override
-    public void onDestroy() {
-            Sensey.getInstance().stopShakeDetection(this);
-            Sensey.getInstance().stop();
-        super.onDestroy();
-    }
+//    @Override
+//    public void onDestroy() {
+//            Sensey.getInstance().stopShakeDetection(this);
+//            Sensey.getInstance().stop();
+//        super.onDestroy();
+//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -122,8 +122,8 @@ public class MetroLinesFragment extends Fragment implements ShakeDetector.ShakeL
         View view = binding.getRoot();
         destinationButton = view.findViewById(R.id.destinationButton);
 
-        Sensey.getInstance().init(getActivity());
-        Sensey.getInstance().startShakeDetection(this);
+//        Sensey.getInstance().init(getActivity());
+//        Sensey.getInstance().startShakeDetection(this);
 
         layoutManager = new LinearLayoutManager(getActivity());
 
@@ -150,16 +150,16 @@ public class MetroLinesFragment extends Fragment implements ShakeDetector.ShakeL
             public void onClick(View view) {
                 if ((binding.fromText.getText().toString().equals("") || binding.fromText.getText().toString().equals(" "))
                         && (binding.toText.getText().toString().equals("") || binding.toText.getText().toString().equals(" "))) {
-                    Toast.makeText(getActivity(), "Please Type Stations Name", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.Station_Name, Toast.LENGTH_SHORT).show();
                     YoYo.with(Techniques.Shake).duration(500).repeat(2).playOn(binding.fromText);
                     YoYo.with(Techniques.Shake).duration(500).repeat(2).playOn(binding.toText);
                     return;
                 } else if (binding.fromText.getText().toString().equals("") || binding.fromText.getText().toString().equals(" ")) {
-                    Toast.makeText(getActivity(), "Please Type Station Name in From Station", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.From_Station, Toast.LENGTH_SHORT).show();
                     YoYo.with(Techniques.Shake).duration(500).repeat(2).playOn(binding.fromText);
                     return;
                 } else if (binding.toText.getText().toString().equals("") || binding.toText.getText().toString().equals(" ")) {
-                    Toast.makeText(getActivity(), "Please Type Station Name in To Station", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.To_Station, Toast.LENGTH_SHORT).show();
                     YoYo.with(Techniques.Shake).duration(500).repeat(2).playOn(binding.toText);
                     return;
                 }
@@ -194,7 +194,7 @@ public class MetroLinesFragment extends Fragment implements ShakeDetector.ShakeL
                         public void onBoomButtonClick(int index) {
                             if (binding.fromText.getText().toString().equalsIgnoreCase("")
                                     || binding.fromText.getText().toString().equalsIgnoreCase(" ")) {
-                                Toast.makeText(context, "Please type your From Station", Toast.LENGTH_LONG).show();
+                                Toast.makeText(context, R.string.From_Station, Toast.LENGTH_LONG).show();
                                 YoYo.with(Techniques.Shake).duration(500).repeat(2).playOn(binding.fromText);
                                 return;
                             }
@@ -223,17 +223,17 @@ public class MetroLinesFragment extends Fragment implements ShakeDetector.ShakeL
         return view;
     }
 
-    @Override
-    public void onShakeDetected() {
-
-    }
-
-    @Override
-    public void onShakeStopped() {
-        binding.fromText.setText("");
-        binding.toText.setText("");
-        stationsViewModel.stationsNames.setValue(blankArrayList);
-    }
+//    @Override
+//    public void onShakeDetected() {
+//
+//    }
+//
+//    @Override
+//    public void onShakeStopped() {
+//        binding.fromText.setText("");
+//        binding.toText.setText("");
+//        stationsViewModel.stationsNames.setValue(blankArrayList);
+//    }
 
     @Override
     public void onLocationChanged(Location location) {

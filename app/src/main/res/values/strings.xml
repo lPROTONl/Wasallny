@@ -24,4 +24,9 @@
     <string name="ex_heliopolis">Ex: Heliopolis</string>
     <string name="Map">Map</string>
     <string name="Nearest_Station">Nearest Station</string>
+    <string name="Check_your_Internet_Connection">Check your Internet Connection</string>
+    <string name="Street_Name">Try it in English Or try to add st after the street name</string>
+    <string name="Station_Name">Please Type Stations Name</string>
+    <string name="From_Station">Please Type Station Name in From Station</string>
+    <string name="To_Station">Please Type Station Name in To Station</string>
 </resources>

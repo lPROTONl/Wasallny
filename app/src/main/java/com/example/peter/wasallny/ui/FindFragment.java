@@ -26,6 +26,8 @@ import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +58,7 @@ import static android.content.Context.LOCATION_SERVICE;
  * A simple {@link Fragment} subclass.
  */
 
-public class FindFragment extends Fragment implements ShakeDetector.ShakeListener, LocationListener {
+public class FindFragment extends Fragment implements LocationListener {
 
     FindViewModel findViewModel;
     FragmentFindBinding binding;
@@ -70,12 +72,12 @@ public class FindFragment extends Fragment implements ShakeDetector.ShakeListene
     ConnectivityManager connectivity;
 
     LocationManager manager;
-    @Override
-    public void onDestroy() {
-        Sensey.getInstance().stopShakeDetection(this);
-        Sensey.getInstance().stop();
-        super.onDestroy();
-    }
+//    @Override
+//    public void onDestroy() {
+//        Sensey.getInstance().stopShakeDetection(this);
+//        Sensey.getInstance().stop();
+//        super.onDestroy();
+//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -109,6 +111,7 @@ public class FindFragment extends Fragment implements ShakeDetector.ShakeListene
             manager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, this, null);
         }
 
+
         binding.setLifecycleOwner(getActivity());
         binding.GetButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,6 +123,7 @@ public class FindFragment extends Fragment implements ShakeDetector.ShakeListene
                 findViewModel.findNearestStation(binding.typedestText.getText().toString(),context, connectivity, latitude, longitude);
             }
         });
+
         binding.langSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -127,6 +131,8 @@ public class FindFragment extends Fragment implements ShakeDetector.ShakeListene
                 switch (binding.langSpinner.getSelectedItem().toString()){
                     case "English":
 //                        Toast.makeText(context, "Eng", Toast.LENGTH_SHORT).show();
+                        binding.mylocationText.setGravity(Gravity.RIGHT);
+                        binding.mydestText.setGravity(Gravity.RIGHT);
                         if (message == null && !Locale.getDefault().toString().contains("en")){
 //                            Toast.makeText(context, "us"+ message, Toast.LENGTH_SHORT).show();
                             message = new Message("en");
@@ -139,6 +145,8 @@ public class FindFragment extends Fragment implements ShakeDetector.ShakeListene
                         }
                         break;
                     case "عربي":
+                        binding.mylocationText.setGravity(Gravity.LEFT);
+                        binding.mydestText.setGravity(Gravity.LEFT);
 //                        Toast.makeText(context, "arb", Toast.LENGTH_SHORT).show();
                         if (message == null && !Locale.getDefault().toString().equals("ar")){
 //                            Toast.makeText(context, Locale.getDefault().toString(), Toast.LENGTH_SHORT).show();
@@ -152,6 +160,8 @@ public class FindFragment extends Fragment implements ShakeDetector.ShakeListene
                         }
                         break;
                     default :
+                        binding.mylocationText.setGravity(Gravity.RIGHT);
+                        binding.mydestText.setGravity(Gravity.RIGHT);
                         break;
                 }
             }
@@ -164,9 +174,9 @@ public class FindFragment extends Fragment implements ShakeDetector.ShakeListene
 
         View view = binding.getRoot();
 
-        Sensey.getInstance().init(getActivity());
-        Sensey.getInstance().startShakeDetection(this);
-
+//        Sensey.getInstance().init(getActivity());
+//        Sensey.getInstance().startShakeDetection(this);
+//
 
         findViewModel.nearLocStationMutabel.observe(getActivity(), new Observer<String>() {
             @Override
@@ -204,17 +214,17 @@ public class FindFragment extends Fragment implements ShakeDetector.ShakeListene
         super.onDestroyView();
     }
 
-    @Override
-    public void onShakeDetected() {
-
-    }
-
-    @Override
-    public void onShakeStopped() {
-        binding.typedestText.setText("");
-        binding.mylocationText.setText("");
-        binding.mydestText.setText("");
-    }
+//    @Override
+//    public void onShakeDetected() {
+//
+//    }
+//
+//    @Override
+//    public void onShakeStopped() {
+//        binding.typedestText.setText("");
+//        binding.mylocationText.setText("");
+//        binding.mydestText.setText("");
+//    }
 
     @Override
     public void onLocationChanged(Location location) {

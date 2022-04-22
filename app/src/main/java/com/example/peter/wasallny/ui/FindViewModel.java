@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.example.peter.wasallny.R;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class FindViewModel extends ViewModel {
 
             if (Build.VERSION.SDK_INT >= 23){
                 if (connectivity.getActiveNetwork()==null){
-                    Toast.makeText(context, "Check your Internet Connetion", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, R.string.Check_your_Internet_Connection, Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -123,7 +124,7 @@ public class FindViewModel extends ViewModel {
                                         @Override
                                         public void run() {
                                             nearDestStationMutabel.setValue("");
-                                            Toast.makeText(context, "Try it in English Or try to add st after the street name", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(context, R.string.Street_Name, Toast.LENGTH_LONG).show();
                                         }
                                     });
                                     e.printStackTrace();
@@ -142,7 +143,7 @@ public class FindViewModel extends ViewModel {
 
             if (Build.VERSION.SDK_INT < 23){
                 if (connectivity.getActiveNetworkInfo()==null){
-                    Toast.makeText(context, "Check your Internet Connetion", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, R.string.Check_your_Internet_Connection, Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -215,8 +216,8 @@ public class FindViewModel extends ViewModel {
                                     handler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            nearDestStationMutabel.postValue("dsfsdfsd");
-                                            Toast.makeText(context, "Try it in English Or try to add st after the street name", Toast.LENGTH_LONG).show();
+                                            nearDestStationMutabel.postValue("");
+                                            Toast.makeText(context, R.string.Street_Name, Toast.LENGTH_LONG).show();
                                         }
                                     });                                    e.printStackTrace();
                                 }

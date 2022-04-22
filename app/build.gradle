@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     defaultConfig {
         applicationId "com.petermusk.wasallny"
         minSdkVersion 16
-        targetSdkVersion 29
-        versionCode 13
+        targetSdkVersion 30
+        versionCode 15
         versionName "2.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 

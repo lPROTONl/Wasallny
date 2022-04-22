@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.example.peter.wasallny.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,7 +54,7 @@ public class StationsViewModel extends ViewModel {
         
          if (Build.VERSION.SDK_INT >= 23) {
               if (connectivity.getActiveNetwork() == null) {
-                 Toast.makeText(context, "Check your Internet Connetion", Toast.LENGTH_SHORT).show();
+                 Toast.makeText(context, R.string.Check_your_Internet_Connection, Toast.LENGTH_SHORT).show();
                  return;
              } else {
                  Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?saddr=" +
@@ -64,7 +65,7 @@ public class StationsViewModel extends ViewModel {
              }
          } else if (Build.VERSION.SDK_INT < 23) {
               if (connectivity.getActiveNetworkInfo() == null) {
-                 Toast.makeText(context, "Check your Internet Connetion", Toast.LENGTH_SHORT).show();
+                 Toast.makeText(context, R.string.Check_your_Internet_Connection, Toast.LENGTH_SHORT).show();
                  return;
              } else {
                  Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?saddr=" +
@@ -81,7 +82,7 @@ public class StationsViewModel extends ViewModel {
 
         if (Build.VERSION.SDK_INT >= 23) {
             if (connectivity.getActiveNetwork() == null) {
-                Toast.makeText(context, "Check your Internet Connetion", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.Check_your_Internet_Connection, Toast.LENGTH_SHORT).show();
                 return;
             } else {
                 try {
@@ -115,7 +116,7 @@ public class StationsViewModel extends ViewModel {
         } else if (Build.VERSION.SDK_INT < 23) {
 
             if (connectivity.getActiveNetworkInfo() == null) {
-                Toast.makeText(context, "Check your Internet Connetion", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.Check_your_Internet_Connection, Toast.LENGTH_SHORT).show();
                 return;
             } else {
                 try {
